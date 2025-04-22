@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int domino_matrix[L][R] = {
+const int domino_matrix[L][R] = {
     {0, 0, 1, 1, 2, 3, 3, 5, 4, 0},
     {3, 3, 2, 5, 6, 6, 3, 4, 2, 0},
     {6, 3, 0, 6, 1, 1, 6, 4, 2, 0},
@@ -30,30 +30,44 @@ class Domino{
 
 };
 
-int main(){ 
+class Game_board{
+    public:
+    bool used[L][R];
+    bool board[L][R];
+
+    Game_board(const int domino_matrix_draft[L][R]){
+        for (int i = 0; i < L; ++i){
+            for (int j = 0; j < R; ++j) {
+                board[i][j]=domino_matrix_draft[i][j];
+                used[i][j]=0;
+        }
+    }
 }
 
-void find_repeat(int domino_matrix[L][R], int more_8[NIMIOUS], int &size){
-    int counts[7] = {0};
-    size = 0;
-    for (int i = 0; i < L; i++){
-        for (int j = 0; j < R; j++){
-            int val = domino_matrix[i][j];
-            if (val >= 0 && val <= 6){
-                counts[val]++;
+
+};
+
+class Domino_solver{
+    /*void find_repeat(int domino_matrix[L][R], int more_8[NIMIOUS], int &size){
+        int counts[7] = {0};
+        size = 0;
+        for (int i = 0; i < L; i++){
+            for (int j = 0; j < R; j++){
+                int val = domino_matrix[i][j];
+                if (val >= 0 && val <= 6){
+                    counts[val]++;
+                }
+            }
+        }
+        for (int i = 0; i < 7; i++){
+            int over = counts[i] - 8; 
+            for (int j = 0; j < over; j++) {
+                more_8[size++] = i;
             }
         }
     }
-    for (int i = 0; i < 7; i++){
-        int over = counts[i] - 8; 
-        for (int j = 0; j < over; j++) {
-            more_8[size++] = i;
-        }
-    }
-}
+    */
+};
+   
 
-
-    
-
-
-
+int main(){}
