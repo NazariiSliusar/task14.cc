@@ -1,7 +1,11 @@
 #include <iostream>
+#include <set>
+#include <utility>
+
 #define L 6
 #define R 10
 #define NIMIOUS (L*R-56)
+#define MAX_DOMINOES 28
 
 using namespace std;
 
@@ -49,7 +53,7 @@ bool isValid(int c, int u ){
 }
 
 bool isUsed(int c, int u ){
-    used[c][u];
+    return used[c][u];
 }
 
 int getValue(int c, int u ){
@@ -67,7 +71,44 @@ void setUsed(int c, int u, bool value=true){
 };
 
 class Domino_solver{
-    /*void find_repeat(int domino_matrix[L][R], int more_8[NIMIOUS], int &size){
+    const int dx[2]={0,1};
+    const int dy[2]={1,0};
+    set<pair<int,int>> used_Dominoes;
+    Game_board work_board;
+    Domino solution_arr[MAX_DOMINOES];
+    int solution_size = 0;
+
+    bool solve(){
+        for (int i = 0; i < L; i++){
+            for (int j = 0; j < R; j++){
+                if(work_board.isUsed(i,j)&& work_board.getValue(i,j)!=0){
+                    for(int d =0; d<2; ++d){
+                        int ni = i +dx[d];
+                        int nj = j +dy[d];
+                        if(work_board.isValid(ni,nj)&& !work_board.isUsed(ni,nj)&& work_board.getValue(ni,nj)!= -1){
+                            int a = work_board.getValue(i,j);
+                            int b= work_board.getValue(ni, nj);
+                            pair<int, int> domino =  {min(a, b), max(a, b)};
+                            if(used_Dominoes.count(domino)) continue;
+                            work_board.setUsed(i,j);
+                            work_board.setUsed(ni,nj);
+                            used_Dominoes.insert(domino);
+                            solution_arr[solution_size++] =Domino(i,j,ni,nj);
+                            if(solve()) return true;
+                            --solution_size;
+                            used_Dominoes.erase(domino);
+                            work_board.setUsed(i,j,false);
+                            work_board.setUsed(ni,nj,false);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+    void find_repeat(int domino_matrix[L][R], int more_8[NIMIOUS], int &size){
         int counts[7] = {0};
         size = 0;
         for (int i = 0; i < L; i++){
@@ -85,7 +126,6 @@ class Domino_solver{
             }
         }
     }
-    */
 };
    
 
