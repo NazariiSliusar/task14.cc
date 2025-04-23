@@ -44,6 +44,25 @@ class Game_board{
     }
 }
 
+bool isValid(int c, int u ){
+    return c>=0 && u>=0 && c<L && u<R;
+}
+
+bool isUsed(int c, int u ){
+    used[c][u];
+}
+
+int getValue(int c, int u ){
+    return board[c][u];
+}
+
+void setValue(int c, int u, int value){
+    board[c][u] =value;
+}
+
+void setUsed(int c, int u, bool value=true){
+    used[L][R]=value;
+}
 
 };
 
