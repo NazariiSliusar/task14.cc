@@ -123,7 +123,15 @@ class Domino_solver{
                     }
                 }
             }
-            return true;
+            int non_neg=0;
+            for(int i =0; i<L;++i){
+                for(int j = 0; j < R; ++j){
+                    if(work_board.getValue(i,j)!= -1){
+                        non_neg++;
+                    }
+                }
+            }
+            return solution_size*2 == non_neg;
         }
 
     void find_repeat(const int domino_matrix1[L][R], int more_8[NIMIOUS], int &size){
