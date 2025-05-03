@@ -1,6 +1,8 @@
 #include <iostream>
 #include <set>
 #include <utility>
+#include <algorithm>
+#include <cstring>
 
 #define L 6
 #define R 10
@@ -23,10 +25,10 @@ class Domino{
     public:
     int x1,y1,x2,y2;
     Domino(){x1=0;y1=0;x2=0;y2=0;}
-    Domino(int c1, int c2, int u1, int u2){
+    Domino(int c1, int u1, int c2, int u2){
         x1=c1;
-        x2=c2;
         y1=u1;
+        x2=c2;
         y2=u2;
     }
     void print(){
@@ -38,13 +40,13 @@ class Domino{
 class Game_board{
     public:
     bool used[L][R];
-    bool board[L][R];
+    int board[L][R];
 
     Game_board(const int domino_matrix_draft[L][R]){
         for (int i = 0; i < L; ++i){
             for (int j = 0; j < R; ++j) {
                 board[i][j]=domino_matrix_draft[i][j];
-                used[i][j]=0;
+                used[i][j]=false;
             }
         }
     }
@@ -86,6 +88,7 @@ class Domino_solver{
     Game_board work_board;
     Domino solution_arr[MAX_DOMINOES];
     int solution_size = 0;
+    Domino_solver(const int domino_mutrix[L][R]) : work_board(domino_mutrix) {}	
     
     void reset_solver(){
         solution_size=0;
@@ -96,7 +99,7 @@ class Domino_solver{
     bool solve(){
         for (int i = 0; i < L; i++){
             for (int j = 0; j < R; j++){
-                if(work_board.isUsed(i,j)&& work_board.getValue(i,j)!=0){
+                if(!work_board.isUsed(i,j)&& work_board.getValue(i,j)!=-1){
                     for(int d =0; d<2; ++d){
                         int ni = i +dx[d];
                         int nj = j +dy[d];
@@ -189,10 +192,12 @@ class Domino_solver{
                                             int c = indices[idx]%R;
                                             this->work_board.setValue(r,c,-1);
                                         }
+                                        this->reset_solver();
                                         if(this->solve()){
                                             cout<<"Розвязок головоломки знайдено \n";
                                             for(int solve_idx=0; solve_idx < this->solution_size; ++solve_idx){
                                                 this->solution_arr[solve_idx].print();
+                                                cout<<endl;
                                             }
                                             return true;
                                         }
@@ -210,4 +215,13 @@ class Domino_solver{
 };
    
 
-int main(){}
+int main(){
+    Domino_solver solver(domino_matrix);
+    int target_digits_arr[NIMIOUS];
+    int target_digits_size = 0;
+    solver.find_repeat(domino_matrix, target_digits_arr, target_digits_size);
+    bool solution_found =  solver.solve_selection(domino_matrix,target_digits_arr,target_digits_size);
+    if (!solution_found) {
+        cout << "\nРозвязок знайти не можливо для поля 6 на 10\n";
+    }
+}
