@@ -12,7 +12,7 @@
 
 using namespace std;
 
-const int domino_matrix[L][R] = {
+const int DOMINO_MATRIX[L][R] = {
     {0, 0, 1, 1, 2, 3, 3, 5, 4, 0},
     {3, 3, 2, 5, 6, 6, 3, 4, 2, 0},
     {6, 3, 0, 6, 1, 1, 6, 4, 2, 0},
@@ -76,6 +76,16 @@ class Game_board{
             for(int j=0; j<R; ++j){
                 used[i][j]=false;
             }
+        }
+    }
+
+    void print_board(){
+        cout<<"Робоче поле:\n";
+        for(int i = 0; i < L; i++){
+            for(int j = 0; j < R; j++){
+                cout<< board[i][j]<<" ";
+            }
+            cout<<endl;
         }
     }
 };
@@ -224,11 +234,13 @@ class Domino_solver{
    
 
 int main(){
-    Domino_solver solver(domino_matrix);
+    Game_board view (DOMINO_MATRIX);
+    view.print_board();
+    Domino_solver solver(DOMINO_MATRIX);
     int target_digits_arr[NIMIOUS];
     int target_digits_size = 0;
-    solver.find_repeat(domino_matrix, target_digits_arr, target_digits_size);
-    bool solution_found =  solver.solve_selection(domino_matrix,target_digits_arr,target_digits_size);
+    solver.find_repeat(DOMINO_MATRIX, target_digits_arr, target_digits_size);
+    bool solution_found =  solver.solve_selection(DOMINO_MATRIX,target_digits_arr,target_digits_size);
     if (!solution_found) {
         cout << "\nРозвязок знайти не можливо для поля 6 на 10\n";
     }
