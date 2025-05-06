@@ -22,8 +22,9 @@ const int DOMINO_MATRIX[L][R] = {
 };
 
 class Domino{
-    public:
+    private:
     int x1,y1,x2,y2;
+    public:
     Domino(){x1=0;y1=0;x2=0;y2=0;}
     Domino(int c1, int u1, int c2, int u2){
         x1=c1;
@@ -34,14 +35,13 @@ class Domino{
     void print(){
         cout << "(" << x1 << "," << y1 << ") — (" << x2 << "," << y2 << ")";
     }
-
 };
 
 class Game_board{
-    public:
+    private:
     bool used[L][R];
     int board[L][R];
-
+    public:
     Game_board(const int domino_matrix_draft[L][R]){
         for (int i = 0; i < L; ++i){
             for (int j = 0; j < R; ++j) {
@@ -51,27 +51,27 @@ class Game_board{
         }
     }
 
-    bool isValid(int c, int u ){
+    bool is_valid(int c, int u ){
         return c>=0 && u>=0 && c<L && u<R;
     }
     
-    bool isUsed(int c, int u ){
+    bool is_used(int c, int u ){
         return used[c][u];
     }
     
-    int getValue(int c, int u ){
+    int get_value(int c, int u ){
         return board[c][u];
     }
     
-    void setValue(int c, int u, int value){
+    void set_value(int c, int u, int value){
         board[c][u] =value;
     }
     
-    void setUsed(int c, int u, bool value=true){
+    void set_used(int c, int u, bool value=true){
         used[c][u]=value;
     }
     
-    void resetUsed(){
+    void reset_used(){
         for(int i=0; i<L;++i){
             for(int j=0; j<R; ++j){
                 used[i][j]=false;
@@ -91,42 +91,43 @@ class Game_board{
 };
 
 class Domino_solver{
-    public:
+    private:
     const int dx[2]={0,1};
     const int dy[2]={1,0};
-    set<pair<int,int>> used_Dominoes;
+    set<pair<int,int>> used_dominoes;
     Game_board work_board;
     Domino solution_arr[MAX_DOMINOES];
     int solution_size = 0;
+    public:
     Domino_solver(const int domino_mutrix[L][R]) : work_board(domino_mutrix) {}	
     
     void reset_solver(){
         solution_size=0;
-        used_Dominoes.clear();
-        work_board.resetUsed();
+        used_dominoes.clear();
+        work_board.reset_used();
     }
 
     bool solve(){
         for (int i = 0; i < L; i++){
             for (int j = 0; j < R; j++){
-                if(!work_board.isUsed(i,j)&& work_board.getValue(i,j)!=-1){
+                if(!work_board.is_used(i,j)&& work_board.get_value(i,j)!=-1){
                     for(int d =0; d<2; ++d){
                         int ni = i +dx[d];
                         int nj = j +dy[d];
-                        if(work_board.isValid(ni,nj)&& !work_board.isUsed(ni,nj)&& work_board.getValue(ni,nj)!= -1){
-                            int a = work_board.getValue(i,j);
-                            int b= work_board.getValue(ni, nj);
+                        if(work_board.is_valid(ni,nj)&& !work_board.is_used(ni,nj)&& work_board.get_value(ni,nj)!= -1){
+                            int a = work_board.get_value(i,j);
+                            int b= work_board.get_value(ni, nj);
                             pair<int, int> domino =  {min(a, b), max(a, b)};
-                            if(used_Dominoes.count(domino)) continue;
-                            work_board.setUsed(i,j);
-                            work_board.setUsed(ni,nj);
-                            used_Dominoes.insert(domino);
+                            if(used_dominoes.count(domino)) continue;
+                            work_board.set_used(i,j);
+                            work_board.set_used(ni,nj);
+                            used_dominoes.insert(domino);
                             solution_arr[solution_size++] =Domino(i,j,ni,nj);
                             if(solve()) return true;
                             --solution_size;
-                            used_Dominoes.erase(domino);
-                            work_board.setUsed(i,j,false);
-                            work_board.setUsed(ni,nj,false);
+                            used_dominoes.erase(domino);
+                            work_board.set_used(i,j,false);
+                            work_board.set_used(ni,nj,false);
                             }
                         }
                         return false;
@@ -136,7 +137,7 @@ class Domino_solver{
             int non_neg=0;
             for(int i =0; i<L;++i){
                 for(int j = 0; j < R; ++j){
-                    if(work_board.getValue(i,j)!= -1){
+                    if(work_board.get_value(i,j)!= -1){
                         non_neg++;
                     }
                 }
@@ -202,13 +203,13 @@ class Domino_solver{
                                         indices[3]=index_3;
                                         for(int row=0; row<L; ++row) {
                                             for(int col=0; col<R; ++col) {
-                                                this->work_board.setValue(row, col, domino_matrix2[row][col]);
+                                                this->work_board.set_value(row, col, domino_matrix2[row][col]);
                                             }
                                         }
                                         for(int idx=0;idx<NIMIOUS; ++idx){
                                             int r = indices[idx]/R;
                                             int c = indices[idx]%R;
-                                            this->work_board.setValue(r,c,-1);
+                                            this->work_board.set_value(r,c,-1);
                                         }
                                         this->reset_solver();
                                         if(this->solve()){
