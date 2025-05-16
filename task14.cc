@@ -21,22 +21,6 @@ const int DOMINO_MATRIX[L][R] = {
     {1, 1, 4, 6, 0, 5, 1, 3, 5, 3}
 };
 
-class Domino{
-    private:
-    int x1,y1,x2,y2;
-    public:
-    Domino(){x1=0;y1=0;x2=0;y2=0;}
-    Domino(int c1, int u1, int c2, int u2){
-        x1=c1;
-        y1=u1;
-        x2=c2;
-        y2=u2;
-    }
-    void print(){
-        cout << "(" << x1 << "," << y1 << ") — (" << x2 << "," << y2 << ")";
-    }
-};
-
 class Game_board{
     private:
     bool used[L][R];
@@ -87,6 +71,24 @@ class Game_board{
             }
             cout<<endl;
         }
+    }
+};
+
+class Domino{
+    private:
+    int x1,y1,x2,y2;
+    public:
+    Domino(){x1=0;y1=0;x2=0;y2=0;}
+    Domino(int c1, int u1, int c2, int u2){
+        x1=c1;
+        y1=u1;
+        x2=c2;
+        y2=u2;
+    }
+    void print(Game_board& board){
+        int val_1 = board.get_value(x1,y1);
+        int val_2 = board.get_value(x2,y2);
+        cout << "(" << x1 << "," << y1 << ") — (" << x2 << "," << y2 << ")"<<" Domino: "<<"["<< val_1<<"|"<<val_2<<"]";
     }
 };
 
@@ -198,7 +200,6 @@ class Domino_solver{
 
                                 for(int index_3 = index_2 + 1; index_3 < TOTAL_ELEMENTS; ++index_3){
                                     int val_3 = domino_matrix2[index_3/R][index_3%R];
-                                   
                                     if(reminder_counts_draft3[val_3]>0){
                                         indices[3]=index_3;
                                         for(int row=0; row<L; ++row) {
@@ -215,7 +216,7 @@ class Domino_solver{
                                         if(this->solve()){
                                             cout<<"Розвязок головоломки знайдено \n";
                                             for(int solve_idx=0; solve_idx < this->solution_size; ++solve_idx){
-                                                this->solution_arr[solve_idx].print();
+                                                this->solution_arr[solve_idx].print(this->work_board);
                                                 cout<<endl;
                                             }
                                             return true;
