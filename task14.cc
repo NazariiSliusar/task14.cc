@@ -6,7 +6,7 @@
 
 #define L 6
 #define R 10
-#define NIMIOUS (L*R-56) //кількість кілтинок, які потрібно видалити
+#define NIMIOUS (L*R-56) //кількість клітинок, які потрібно видалити
 #define MAX_DOMINOES 28 //Максимальна кількість доміно
 #define TOTAL_ELEMENTS (L*R) //Розмір матриці
 
@@ -26,7 +26,7 @@ class Game_board{
     bool used[L][R];
     int board[L][R];
     public:
-    //Конструктор створює чорнове поле та скидує стан використаних клітинок
+    //Конструктор створює чорнове поле та скидає стан використаних клітинок
     Game_board(const int domino_matrix_draft[L][R]){
         for (int i = 0; i < L; ++i){
             for (int j = 0; j < R; ++j) {
@@ -39,11 +39,11 @@ class Game_board{
     bool is_valid(int c, int u ){
         return c>=0 && u>=0 && c<L && u<R;
     }
-    //Перевірка чи кілтинка зайнята
+    //Перевірка чи клітинка зайнята
     bool is_used(int c, int u ){
         return used[c][u];
     }
-    //Функція для отримання значення кординати
+    //Функція для отримання значення координати
     int get_value(int c, int u ){
         return board[c][u];
     }
@@ -55,7 +55,7 @@ class Game_board{
     void set_used(int c, int u, bool value=true){
         used[c][u]=value;
     }
-    //Функція скидування зайвих клітинок
+    //Функція скидання зайвих клітинок
     void reset_used(){
         for(int i=0; i<L;++i){
             for(int j=0; j<R; ++j){
@@ -77,7 +77,7 @@ class Game_board{
 //Клас для роботи з фішками доміно, збереження, вивід
 class Domino{
     private:
-    //Значення коордиант пар доміно
+    //Значення координат пар доміно
     int x1,y1,x2,y2; 
     public:
     //Конструктор за замовчуванням
@@ -110,7 +110,7 @@ class Board_show_solve {
         // Побудова пустого поля з рамками
         for(int i =0; i<= L *2;++i) {
             for(int j =0; j<= R * 4;++j) {
-                if(i % 2 == 0){ //Парні рядки для горизонтальних лінй та перетинів
+                if(i % 2 == 0){ //Парні рядки для горизонтальних ліній та перетинів
                     display[i][j] = (j % 4 == 0) ? '+' : '-';
                 }else{ //Непарні рядки  для вертикальних ліній та значень
                     display[i][j] = (j % 4 == 0) ? '|' : ' ';
@@ -122,7 +122,7 @@ class Board_show_solve {
             for(int c = 0; c < R; ++c){
                 int val = board.get_value(r, c);
                 if(val != -1){
-                    display[2 * r + 1][4 * c + 2] =(char)('0'+val); //якщо клтинка не зайва виводимо її значення
+                    display[2 * r + 1][4 * c + 2] =(char)('0'+val); //якщо клітинка не зайва виводимо її значення
                 }else{//Якщо зайва виводимо (- -)
                     display[2 * r + 1][4 * c + 1] = '-';
                     display[2 * r + 1][4 * c + 2] = ' ';
@@ -162,20 +162,20 @@ class Domino_solver{
     //Рух для пошуку сусідніх клітинок 0,1 (вправо) 1,0 (вниз)
     const int dx[2]={0,1};
     const int dy[2]={1,0};
-    set<pair<int,int>> used_dominoes; //Контейнер для зберігань пар одни об'єктом
+    set<pair<int,int>> used_dominoes; //Контейнер для зберігань пар одним об'єктом
     Game_board work_board; //Робоче поле, яке можна змінювати
     Domino solution_arr[MAX_DOMINOES]; //масив для зберігання правильно розміщених пар
     int solution_size = 0;
     public:
     //Конструктор, ініціалізує робоче поле початковою матрицею
     Domino_solver(const int domino_mutrix[L][R]) : work_board(domino_mutrix) {}	
-    //Скид розвязку
+    //Скидання розв'язку
     void reset_solver(){
         solution_size=0;
         used_dominoes.clear();
         work_board.reset_used();
     }
-    //Метод пошуку пар дмріно
+    //Метод пошуку пар доміно
     bool solve() {
         for (int i = 0; i < L; i++) {
             for (int j = 0; j < R; j++) {
@@ -189,14 +189,14 @@ class Domino_solver{
                             //Значення пари
                             int a = work_board.get_value(i, j);
                             int b = work_board.get_value(ni, nj);
-                            pair<int, int> domino = {min(a, b), max(a, b)};//Обєднуємо щоб пари до прикладу (2, 3) і (3, 2) вважались однаковими
+                            pair<int, int> domino = {min(a, b), max(a, b)};//Об'єднуємо, щоб пари до прикладу (2, 3) і (3, 2) вважались однаковими
                             if (used_dominoes.count(domino)) continue; //Якщо така пара вже використана пропускаємо
                             // Позначаємо клітинки як використані
                             work_board.set_used(i, j);
                             work_board.set_used(ni, nj);
                             used_dominoes.insert(domino);
                             solution_arr[solution_size++] = Domino(i, j, ni, nj); // Додаємо доміно до розв’язку
-                            if (solve()) return true; //Якщо при такому розміщенні вищло досягти успіху повертаємо розвязок
+                            if (solve()) return true; //Якщо при такому розміщенні вийшло досягти успіху повертаємо розв'язок
                             --solution_size; //Ні, відкат
                             used_dominoes.erase(domino); //Видаляємо з використаних
                             //Позначаємо клітинки як не використані
@@ -220,7 +220,7 @@ class Domino_solver{
         return solution_size * 2 == non_neg;
     }
 
-    //Метод пошуку значень зайвих кілтинок    
+    //Метод пошуку значень зайвих клітинок    
     void find_repeat(const int domino_matrix1[L][R], int more_8[NIMIOUS], int &size){
         int counts[7] = {0};
         size = 0;
@@ -228,7 +228,7 @@ class Domino_solver{
             for (int j = 0; j < R; j++){
                 int val = domino_matrix1[i][j];
                 if (val >= 0 && val <= 6){
-                    counts[val]++; //Кількість вхрдження кожного числа
+                    counts[val]++; //Кількість входження кожного числа
                 }
             }
         }
@@ -242,7 +242,7 @@ class Domino_solver{
 
     //Метод для знаходження комбінації розміщення зайвих цфир
     bool solve_selection(const int domino_matrix2[L][R], const int target_digits[NIMIOUS], int target_digits_size){
-        //Рахуємо скільки разів кожне надлишкове зустрічатися у видалених клітинках
+        //Рахуємо скільки разів кожне надлишкове значення зустрічається у видалених клітинках
         int reminder_counts[7]={0};
         for(int i=0; i<NIMIOUS; ++i){
             int digit = target_digits[i];
@@ -253,9 +253,9 @@ class Domino_solver{
         for(int index_0 = 0; index_0 <= TOTAL_ELEMENTS - NIMIOUS; ++index_0){
             int val_0 = domino_matrix2[index_0/R][index_0%R];// Потенційний індекс на виключення
             if(reminder_counts[val_0]>0){// Перевірка чи входить до шуканих
-                indices[0]=index_0; //Так, запамятовуємо
+                indices[0]=index_0; //Так, запам'ятовуємо
                 int reminder_counts_draft1[7];
-                copy(reminder_counts, reminder_counts+7, reminder_counts_draft1);//Копіювання для заезпеченея незмінності початкових значень при наступних спробах пошуку комбінацій
+                copy(reminder_counts, reminder_counts+7, reminder_counts_draft1);//Копіювання для забезпечення незмінності початкових значень при наступних спробах пошуку комбінацій
                 reminder_counts_draft1[val_0]--;// Зменшуємо лічильник для цього значенння
 
                 for(int index_1 = index_0 + 1; index_1 <= TOTAL_ELEMENTS - (NIMIOUS-1); ++index_1){
@@ -284,15 +284,15 @@ class Domino_solver{
                                                 this->work_board.set_value(row, col, domino_matrix2[row][col]);
                                             }
                                         }
-                                        //Позначаємо вибрані клітинки,як -1
+                                        //Позначаємо вибрані клітинки як -1
                                         for(int idx=0;idx<NIMIOUS; ++idx){
                                             int r = indices[idx]/R;
                                             int c = indices[idx]%R;
                                             this->work_board.set_value(r,c,-1);
                                         }
-                                        this->reset_solver();//Скид стану розвязувача після кожної спроби розміщення
-                                        //Намагаємося розавязати для такого розміщення блокованих цифр
-                                        if(this->solve()){ //Якщо так отримуємо вивід, якщо ні пробуємор до поки не вийде
+                                        this->reset_solver();//Скидання стану розв'язувача після кожної спроби розміщення
+                                        //Намагаємося розв'язати для такого розміщення блокованих цифр
+                                        if(this->solve()){ //Якщо так, отримуємо вивід, якщо ні, пробуємо до поки не вийде
                                             cout<<endl<<"Розвязок головоломки знайдено:"<<endl;
                                             for(int solve_idx=0; solve_idx < this->solution_size; ++solve_idx){
                                                 this->solution_arr[solve_idx].print(this->work_board);
